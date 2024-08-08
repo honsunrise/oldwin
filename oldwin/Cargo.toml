@@ -1,0 +1,22 @@
+[package]
+name = "oldwin"
+description.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+license-file.workspace = true
+categories.workspace = true
+
+[features]
+hidden-build-warning = []
+
+vc-ltl5 = []
+yy-thunks = []
+
+xp = []
+vista = []
+win7 = []
+win8 = []
+win10 = []

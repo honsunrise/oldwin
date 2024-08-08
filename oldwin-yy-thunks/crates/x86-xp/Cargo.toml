@@ -1,0 +1,9 @@
+[package]
+name = "oldwin-platform-yy-thunks-x86-xp"
+description = "Part of the OldWin library for Windows XP"
+version = "0.1.0+1.1.2-Beta7"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+license-file.workspace = true

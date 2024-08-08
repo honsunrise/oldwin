@@ -1,0 +1,20 @@
+[workspace]
+members = [
+  "oldwin",
+  "oldwin-targets",
+  "oldwin-vc-ltl5",
+  "oldwin-vc-ltl5/crates/*",
+  "oldwin-yy-thunks",
+  "oldwin-yy-thunks/crates/*",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Honsun Zhu <honsun@linux.com>"]
+readme = "README.md"
+description = "A Rust library for easy to compatible with older Windows"
+license-file = "LICENSE"
+repository = "https://github.com/honsunrise/oldwin"
+categories = ["os::windows-apis"]

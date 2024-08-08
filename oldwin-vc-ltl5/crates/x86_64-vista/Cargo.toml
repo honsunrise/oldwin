@@ -1,0 +1,9 @@
+[package]
+name = "oldwin-platform-vc-ltl5-x86_64-vista"
+description = "Part of the OldWin library for Windows Vista"
+version = "0.1.0+5.1.1-Beta4"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+license-file.workspace = true

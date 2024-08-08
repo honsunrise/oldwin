@@ -1,0 +1,18 @@
+exclude = [".*"]
+
+[formatting]
+reorder_keys = false
+
+[[rule]]
+include = ["**/Cargo.toml", ".taplo.toml"]
+keys = [
+    "workspace.dependencies",
+    "dependencies",
+    "target.*.dependencies",
+    "target.*.dev-dependencies",
+    "dev-dependencies",
+    "build-dependencies",
+]
+
+[rule.formatting]
+reorder_keys = true
