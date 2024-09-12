@@ -1,6 +1,6 @@
 [package]
-name = "oldwin-platform-vc-ltl5-x86-xp"
-description = "Part of the OldWin library for Windows xp"
+name = "oldwin-platform-vc-ltl5-x86_64-xp-part2"
+description = "Part2 of the OldWin library for Windows XP"
 version = "0.1.0+5.1.1-Beta4"
 edition.workspace = true
 authors.workspace = true

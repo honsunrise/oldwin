@@ -29,7 +29,11 @@ name = "oldwin-platform-vc-ltl5-x86-win8"
 version = "0.1.0+5.1.1-Beta4"
 
 [[package]]
-name = "oldwin-platform-vc-ltl5-x86-xp"
+name = "oldwin-platform-vc-ltl5-x86-xp-part1"
+version = "0.1.0+5.1.1-Beta4"
+
+[[package]]
+name = "oldwin-platform-vc-ltl5-x86-xp-part2"
 version = "0.1.0+5.1.1-Beta4"
 
 [[package]]
@@ -49,7 +53,11 @@ name = "oldwin-platform-vc-ltl5-x86_64-win8"
 version = "0.1.0+5.1.1-Beta4"
 
 [[package]]
-name = "oldwin-platform-vc-ltl5-x86_64-xp"
+name = "oldwin-platform-vc-ltl5-x86_64-xp-part1"
+version = "0.1.0+5.1.1-Beta4"
+
+[[package]]
+name = "oldwin-platform-vc-ltl5-x86_64-xp-part2"
 version = "0.1.0+5.1.1-Beta4"
 
 [[package]]
@@ -109,12 +117,14 @@ dependencies = [
  "oldwin-platform-vc-ltl5-x86-win10",
  "oldwin-platform-vc-ltl5-x86-win7",
  "oldwin-platform-vc-ltl5-x86-win8",
- "oldwin-platform-vc-ltl5-x86-xp",
+ "oldwin-platform-vc-ltl5-x86-xp-part1",
+ "oldwin-platform-vc-ltl5-x86-xp-part2",
  "oldwin-platform-vc-ltl5-x86_64-vista",
  "oldwin-platform-vc-ltl5-x86_64-win10",
  "oldwin-platform-vc-ltl5-x86_64-win7",
  "oldwin-platform-vc-ltl5-x86_64-win8",
- "oldwin-platform-vc-ltl5-x86_64-xp",
+ "oldwin-platform-vc-ltl5-x86_64-xp-part1",
+ "oldwin-platform-vc-ltl5-x86_64-xp-part2",
 ]
 
 [[package]]

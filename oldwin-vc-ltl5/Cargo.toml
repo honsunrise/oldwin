@@ -14,17 +14,24 @@ oldwin-platform-vc-ltl5-x86_64-vista = { version = "0.1.0", path = "./crates/x86
 oldwin-platform-vc-ltl5-x86_64-win10 = { version = "0.1.0", path = "./crates/x86_64-win10", optional = true }
 oldwin-platform-vc-ltl5-x86_64-win7 = { version = "0.1.0", path = "./crates/x86_64-win7", optional = true }
 oldwin-platform-vc-ltl5-x86_64-win8 = { version = "0.1.0", path = "./crates/x86_64-win8", optional = true }
-oldwin-platform-vc-ltl5-x86_64-xp = { version = "0.1.0", path = "./crates/x86_64-xp", optional = true }
+oldwin-platform-vc-ltl5-x86_64-xp-part1 = { version = "0.1.0", path = "./crates/x86_64-xp-part1", optional = true }
+oldwin-platform-vc-ltl5-x86_64-xp-part2 = { version = "0.1.0", path = "./crates/x86_64-xp-part2", optional = true }
 
 [target.'cfg(all(target_arch = "x86", target_env = "msvc"))'.dependencies]
 oldwin-platform-vc-ltl5-x86-vista = { version = "0.1.0", path = "./crates/x86-vista", optional = true }
 oldwin-platform-vc-ltl5-x86-win10 = { version = "0.1.0", path = "./crates/x86-win10", optional = true }
 oldwin-platform-vc-ltl5-x86-win7 = { version = "0.1.0", path = "./crates/x86-win7", optional = true }
 oldwin-platform-vc-ltl5-x86-win8 = { version = "0.1.0", path = "./crates/x86-win8", optional = true }
-oldwin-platform-vc-ltl5-x86-xp = { version = "0.1.0", path = "./crates/x86-xp", optional = true }
+oldwin-platform-vc-ltl5-x86-xp-part1 = { version = "0.1.0", path = "./crates/x86-xp-part1", optional = true }
+oldwin-platform-vc-ltl5-x86-xp-part2 = { version = "0.1.0", path = "./crates/x86-xp-part2", optional = true }
 
 [features]
-xp = ["oldwin-platform-vc-ltl5-x86_64-xp", "oldwin-platform-vc-ltl5-x86-xp"]
+xp = [
+  "oldwin-platform-vc-ltl5-x86_64-xp-part1",
+  "oldwin-platform-vc-ltl5-x86_64-xp-part2",
+  "oldwin-platform-vc-ltl5-x86-xp-part1",
+  "oldwin-platform-vc-ltl5-x86-xp-part2",
+]
 vista = [
   "oldwin-platform-vc-ltl5-x86_64-vista",
   "oldwin-platform-vc-ltl5-x86-vista",
