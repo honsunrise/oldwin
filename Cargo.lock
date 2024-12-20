@@ -14,51 +14,51 @@ version = "0.1.0"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-vista"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-win10"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-win7"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-win8"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-xp-part1"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-xp-part2"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-vista"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-win10"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-win7"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-win8"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-xp-part1"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-xp-part2"
-version = "0.1.0+5.2.1-Beta1"
+version = "0.1.1+5.2.1-Beta1"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86-vista"
@@ -102,7 +102,7 @@ version = "0.1.1+1.1.5-Beta2"
 
 [[package]]
 name = "oldwin-targets"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "mutually_exclusive_features",
  "oldwin-vc-ltl5",
@@ -111,7 +111,7 @@ dependencies = [
 
 [[package]]
 name = "oldwin-vc-ltl5"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "oldwin-platform-vc-ltl5-x86-vista",
  "oldwin-platform-vc-ltl5-x86-win10",

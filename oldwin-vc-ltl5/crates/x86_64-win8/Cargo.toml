@@ -1,7 +1,7 @@
 [package]
 name = "oldwin-platform-vc-ltl5-x86_64-win8"
-description = "Part of the OldWin library for Windows 8"
-version = "0.1.0+5.1.1-Beta4"
+description = "OldWin VC-LTL5 library for Windows 8"
+version = "0.1.1+5.2.1-Beta1"
 edition.workspace = true
 authors.workspace = true
 repository.workspace = true
