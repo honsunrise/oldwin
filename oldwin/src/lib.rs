@@ -87,22 +87,42 @@ pub fn inject() {
         },
     }
 
-    #[cfg(feature = "xp")]
+    #[cfg(target_feature = "crt-static")]
     {
-        println!("cargo:rustc-link-lib=dylib:+verbatim=YY_Thunks_for_WinXP.obj");
+        println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBVCRUNTIME");
+        println!("cargo:rustc-link-lib=static:+whole-archive=libvcruntime");
+        println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBUCRT");
+        println!("cargo:rustc-link-lib=static=libucrt");
+    }
+    #[cfg(not(target_feature = "crt-static"))]
+    {
+        println!("cargo:rustc-link-arg=/NODEFAULTLIB:MSVCRT");
+        println!("cargo:rustc-link-arg=/NODEFAULTLIB:VCRUNTIME");
+        println!("cargo:rustc-link-lib=static:+whole-archive=vcruntime");
+        println!("cargo:rustc-link-arg=/NODEFAULTLIB:UCRT");
+        println!("cargo:rustc-link-lib=static=ucrt");
     }
 
+    #[cfg(feature = "xp")]
+    println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_WinXP.obj");
+
     #[cfg(feature = "vista")]
-    println!("cargo:rustc-link-lib=dylib:+verbatim=YY_Thunks_for_Vista.obj");
+    println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Vista.obj");
 
     #[cfg(feature = "win7")]
-    println!("cargo:rustc-link-lib=dylib:+verbatim=YY_Thunks_for_Win7.obj");
+    println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Win7.obj");
 
     #[cfg(feature = "win8")]
-    println!("cargo:rustc-link-lib=dylib:+verbatim=YY_Thunks_for_Win8.obj");
+    {
+        println!("cargo:rustc-link-lib=static:+verbatim=vccorlib140.pacth.lib");
+        println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Win8.obj");
+    }
 
     #[cfg(feature = "win10")]
-    println!("cargo:rustc-link-lib=dylib:+verbatim=YY_Thunks_for_Win10.0.10240.obj");
+    {
+        println!("cargo:rustc-link-lib=static:+verbatim=vccorlib140.pacth.lib");
+        println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Win10.0.10240.obj");
+    }
 
     if cfg!(not(feature = "hidden-build-warning")) {
         #[cfg(feature = "xp")]
