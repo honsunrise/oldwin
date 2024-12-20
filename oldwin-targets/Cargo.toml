@@ -1,7 +1,7 @@
 [package]
 name = "oldwin-targets"
+version = "0.1.0"
 description.workspace = true
-version.workspace = true
 edition.workspace = true
 authors.workspace = true
 repository.workspace = true
@@ -11,7 +11,7 @@ categories.workspace = true
 
 [dependencies]
 oldwin-vc-ltl5 = { version = "0.1.0", path = "../oldwin-vc-ltl5", optional = true }
-oldwin-yy-thunks = { version = "0.1.0", path = "../oldwin-yy-thunks", optional = true }
+oldwin-yy-thunks = { version = "0.1.1", path = "../oldwin-yy-thunks", optional = true }
 
 [build-dependencies]
 mutually_exclusive_features = "0.1.0"
