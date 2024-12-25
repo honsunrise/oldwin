@@ -90,15 +90,14 @@ pub fn inject() {
 
     if target_feature.contains("crt-static") {
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBVCRUNTIME");
-        println!("cargo:rustc-link-lib=static:+whole-archive=libvcruntime");
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBUCRT");
-        println!("cargo:rustc-link-lib=static=libucrt");
+        println!("cargo:rustc-link-lib=static:+whole-archive=libucrt");
+        println!("cargo:rustc-link-lib=static=libvcruntime");
     } else {
-        println!("cargo:rustc-link-arg=/NODEFAULTLIB:MSVCRT");
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:VCRUNTIME");
-        println!("cargo:rustc-link-lib=static:+whole-archive=vcruntime");
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:UCRT");
-        println!("cargo:rustc-link-lib=static=ucrt");
+        println!("cargo:rustc-link-lib=static:+whole-archive=ucrt");
+        println!("cargo:rustc-link-lib=static=vcruntime");
     }
 
     #[cfg(feature = "xp")]
