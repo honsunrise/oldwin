@@ -55,6 +55,7 @@ pub fn inject() {
     let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();
     let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+    let target_feature = std::env::var("CARGO_CFG_TARGET_FEATURE").unwrap();
 
     if target_os != "windows" || target_env != "msvc" {
         println!("cargo:warning=Please Only Use OldWin on Windows MSVC!");
@@ -87,15 +88,12 @@ pub fn inject() {
         },
     }
 
-    #[cfg(target_feature = "crt-static")]
-    {
+    if target_feature.contains("crt-static") {
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBVCRUNTIME");
         println!("cargo:rustc-link-lib=static:+whole-archive=libvcruntime");
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBUCRT");
         println!("cargo:rustc-link-lib=static=libucrt");
-    }
-    #[cfg(not(target_feature = "crt-static"))]
-    {
+    } else {
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:MSVCRT");
         println!("cargo:rustc-link-arg=/NODEFAULTLIB:VCRUNTIME");
         println!("cargo:rustc-link-lib=static:+whole-archive=vcruntime");

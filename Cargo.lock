@@ -10,7 +10,7 @@ checksum = "e94e1e6445d314f972ff7395df2de295fe51b71821694f0b0e1e79c4f12c8577"
 
 [[package]]
 name = "oldwin"
-version = "0.1.1"
+version = "0.1.2"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-vista"
