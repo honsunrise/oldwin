@@ -1,6 +1,6 @@
 [package]
 name = "oldwin-targets"
-version = "0.2.0"
+version = "0.2.1"
 description.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -11,8 +11,8 @@ license-file.workspace = true
 categories.workspace = true
 
 [dependencies]
-oldwin-vc-ltl5 = { version = "0.2.0", path = "../oldwin-vc-ltl5", optional = true }
-oldwin-yy-thunks = { version = "0.2.0", path = "../oldwin-yy-thunks", optional = true }
+oldwin-vc-ltl5 = { version = "0.2.1", path = "../oldwin-vc-ltl5", optional = true }
+oldwin-yy-thunks = { version = "0.2.1", path = "../oldwin-yy-thunks", optional = true }
 
 [build-dependencies]
 mutually_exclusive_features = "0.1.0"

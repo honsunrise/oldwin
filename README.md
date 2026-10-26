@@ -42,7 +42,7 @@ VC-LTL patch library for a 0.1 consumer.
 ```toml
 # use yy-thunks and vc-ltl5 on Windows 7
 [target.'cfg(target_family = "windows")'.dependencies]
-oldwin-targets = { version = "0.2.0", default-features = false, features = [
+oldwin-targets = { version = "0.2.1", default-features = false, features = [
   "win7",
   "yy-thunks",
   "vc-ltl5",
@@ -50,7 +50,7 @@ oldwin-targets = { version = "0.2.0", default-features = false, features = [
 
 [build-dependencies]
 # use yy-thunks and vc-ltl5 on Windows 7
-oldwin = { version = "0.2.0", default-features = false, features = [
+oldwin = { version = "0.2.1", default-features = false, features = [
   "win7",
   "yy-thunks",
   "vc-ltl5",

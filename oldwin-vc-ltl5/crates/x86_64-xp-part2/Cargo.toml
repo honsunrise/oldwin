@@ -1,7 +1,7 @@
 [package]
 name = "oldwin-platform-vc-ltl5-x86_64-xp-part2"
 description = "Part2 of OldWin VC-LTL5 library for Windows XP"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 edition.workspace = true
 rust-version.workspace = true
 authors.workspace = true

@@ -10,7 +10,7 @@ checksum = "e94e1e6445d314f972ff7395df2de295fe51b71821694f0b0e1e79c4f12c8577"
 
 [[package]]
 name = "oldwin"
-version = "0.2.0"
+version = "0.2.1"
 
 [[package]]
 name = "oldwin-link-smoke"
@@ -22,95 +22,95 @@ dependencies = [
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-vista"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-win10"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-win7"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-win8"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-xp-part1"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86-xp-part2"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-vista"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-win10"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-win7"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-win8"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-xp-part1"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-vc-ltl5-x86_64-xp-part2"
-version = "0.2.0+5.3.1"
+version = "0.2.1+5.3.1"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86-vista"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86-win10"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86-win7"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86-win8"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86-xp"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86_64-vista"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86_64-win10"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86_64-win7"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86_64-win8"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-platform-yy-thunks-x86_64-xp"
-version = "0.2.0+1.2.3"
+version = "0.2.1+1.2.3"
 
 [[package]]
 name = "oldwin-targets"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "mutually_exclusive_features",
  "oldwin-vc-ltl5",
@@ -119,7 +119,7 @@ dependencies = [
 
 [[package]]
 name = "oldwin-vc-ltl5"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "oldwin-platform-vc-ltl5-x86-vista",
  "oldwin-platform-vc-ltl5-x86-win10",
@@ -137,7 +137,7 @@ dependencies = [
 
 [[package]]
 name = "oldwin-yy-thunks"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "oldwin-platform-yy-thunks-x86-vista",
  "oldwin-platform-yy-thunks-x86-win10",
