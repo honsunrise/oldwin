@@ -65,7 +65,7 @@ jobs:
         include:
           - arch: x86
             target: i686-pc-windows-msvc
-            msvc-arch: amd64_x86
+            msvc-arch: x86
           - arch: x86_64
             target: x86_64-pc-windows-msvc
             msvc-arch: amd64
@@ -79,10 +79,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Configure native MSVC and Windows SDK
-        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
-        with:
-          arch: ${{ matrix.msvc-arch }}
-          vsversion: '2022'
+        run: ./scripts/setup-msvc.ps1 -Arch '${{ matrix.msvc-arch }}'
       - name: Install pinned Rust and target
         run: |
           rustup toolchain install $env:RUST_TOOLCHAIN --profile minimal --target $env:TARGET
@@ -140,7 +137,7 @@ jobs:
         include:
           - arch: x86
             target: i686-win7-windows-msvc
-            msvc-arch: amd64_x86
+            msvc-arch: x86
           - arch: x86_64
             target: x86_64-win7-windows-msvc
             msvc-arch: amd64
@@ -153,10 +150,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Configure native MSVC and Windows SDK
-        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
-        with:
-          arch: ${{ matrix.msvc-arch }}
-          vsversion: '2022'
+        run: ./scripts/setup-msvc.ps1 -Arch '${{ matrix.msvc-arch }}'
       - name: Install pinned nightly with standard-library sources
         # Tier 3 targets have no rustup target add artifacts; build their std below.
         run: |

@@ -150,6 +150,9 @@ GitHub Actions runs on pushes, pull requests, and manual dispatch:
 - PE checks for architecture, subsystem/version, thunk API imports, and CRT DLL imports.
 - MSVC CRT-default-library conflicts (`LNK4098`) fail CI instead of passing as warnings.
 
+Windows jobs initialize Visual Studio 2022's installed Developer PowerShell
+through `scripts/setup-msvc.ps1`, without a JavaScript-based MSVC setup action.
+
 The standalone consumer integration tests exercise the thunk clock against the
 system clock, CRT reallocation across growth/shrink transitions, and CRT number
 parsing with valid and invalid input. Run them on Windows:
