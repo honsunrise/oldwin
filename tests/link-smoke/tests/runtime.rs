@@ -2,7 +2,7 @@ use std::ffi::{c_char, c_void};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 // Resolve against the CRT selected by Rust and OldWin, including +crt-static.
-extern "C" {
+unsafe extern "C" {
     fn malloc(size: usize) -> *mut c_void;
     fn realloc(ptr: *mut c_void, size: usize) -> *mut c_void;
     fn free(ptr: *mut c_void);

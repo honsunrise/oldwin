@@ -6,7 +6,7 @@ compile_error!("Build this regression fixture for a Windows MSVC target");
 #[cfg(windows)]
 pub fn precise_time() -> u64 {
     #[link(name = "kernel32")]
-    extern "system" {
+    unsafe extern "system" {
         fn GetSystemTimePreciseAsFileTime(time: *mut u64);
     }
 

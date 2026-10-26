@@ -1,8 +1,8 @@
 [package]
 name = "oldwin-link-smoke"
 version = "0.0.0"
-edition = "2021"
-rust-version = "1.80"
+edition = "2024"
+rust-version = "1.85"
 publish = false
 
 [workspace]

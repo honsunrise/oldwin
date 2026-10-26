@@ -1,0 +1,14 @@
+inputs:
+  nixpkgs:
+    url: github:cachix/devenv-nixpkgs/rolling
+  devenv:
+    # Match the flake's upstream module version marker fix.
+    url: github:cachix/devenv/a5c34429421e077df6f8f133e502617bedc22206
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
+  rust-overlay:
+    url: github:oxalica/rust-overlay
+    inputs:
+      nixpkgs:
+        follows: nixpkgs

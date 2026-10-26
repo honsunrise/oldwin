@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolchain: ['1.80.0', '1.99.1']
+        toolchain: ['1.85.0', '1.99.1']
     env:
       RUST_TOOLCHAIN: ${{ matrix.toolchain }}
     steps:
@@ -73,7 +73,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x86, x86_64]
-        toolchain: ['1.80.0', '1.99.1']
+        toolchain: ['1.85.0', '1.99.1']
         mode: [yy-only, dynamic, static]
         include:
           - arch: x86

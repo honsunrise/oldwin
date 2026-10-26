@@ -7,11 +7,11 @@ members = [
   "oldwin-yy-thunks",
   "oldwin-yy-thunks/crates/*",
 ]
-resolver = "2"
+resolver = "3"
 
 [workspace.package]
-edition = "2021"
-rust-version = "1.80"
+edition = "2024"
+rust-version = "1.85"
 authors = ["Honsun Zhu <honsun@linux.com>"]
 readme = "README.md"
 description = "A Rust library for easy to compatible with older Windows"

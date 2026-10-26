@@ -17,9 +17,9 @@ The crate relies heavily on [YY-Thunks](https://github.com/Chuyu-Team/YY-Thunks)
 
 ## Usage
 
-The minimum supported Rust version (MSRV) is **1.80**. This workspace pins
-**1.99.1** in `rust-toolchain.toml` for development and verifies builds with it;
-the Rust edition remains 2021.
+The minimum supported Rust version (MSRV) is **1.85**, required by Rust edition
+**2024**. This workspace pins **1.99.1** in `rust-toolchain.toml` for development
+and verifies builds with it.
 
 Bundled native libraries:
 - [YY-Thunks 1.2.3](https://github.com/Chuyu-Team/YY-Thunks/releases/tag/v1.2.3)
@@ -142,7 +142,7 @@ Compilation/linking success is not proof that a binary runs on XP or Vista.
 
 GitHub Actions runs on pushes, pull requests, and manual dispatch:
 
-- Linux workspace build/test on Rust **1.80.0** and **1.99.1**, plus Clippy and
+- Linux workspace build/test on Rust **1.85.0** and **1.99.1**, plus Clippy and
   formatting checks.
 - Native Windows MSVC build/run on both architectures and both stable versions,
   covering all five OS features with YY-Thunks alone, dynamic CRT, and static CRT.
@@ -174,6 +174,43 @@ python tests/verify-pe.py --exe tests/link-smoke/target/x86_64-pc-windows-msvc/d
 The PE check examines ordinary static imports, not delay imports or runtime DLL
 loading. CI executes on modern Windows; it does not prove runtime compatibility
 with Windows XP, Vista, or 7.
+
+## Development Environment
+
+The Nix flake and native devenv CLI share `devenv.nix` and the Rust toolchain
+from `rust-toolchain.toml`. Both input sets are pinned in `flake.lock` and
+`devenv.lock`. Shell outputs are provided for x86_64 Linux, aarch64 Linux,
+and Apple Silicon macOS.
+
+Use Nix with `nix-command` and `flakes` enabled. For the native entrypoint,
+install devenv 2.4 or newer. From the repository root, choose either shell:
+
+```shell
+nix develop --impure
+# or
+devenv shell
+```
+
+`--impure` lets devenv's flake integration determine the checkout directory.
+The shell provides Rust 1.99.1, Cargo, Clippy, rustfmt, Rust sources, a C linker,
+Python, actionlint, and nixfmt. Run `oldwin-check` inside either shell for host
+Rust tests, Clippy, release-planning tests, and workflow validation. The native
+CLI can run the same checks without entering an interactive shell:
+
+```shell
+devenv test
+```
+
+The shell's Rust tools are Nix-provided binaries, not rustup proxies. Use a
+separate rustup environment for `cargo +<toolchain>` commands. Windows SDK/MSVC
+libraries are not bundled; Windows linking and runtime verification remain in CI.
+
+When changing development inputs, update and commit both lockfiles:
+
+```shell
+nix flake update
+devenv update
+```
 
 ## Publishing Releases
 

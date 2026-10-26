@@ -2,3 +2,6 @@
 .vscode
 target/
 __pycache__/
+.devenv/
+.direnv/
+.devenv.flake.nix
