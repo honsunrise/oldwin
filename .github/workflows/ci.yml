@@ -4,6 +4,7 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -35,6 +36,9 @@ jobs:
       - name: Clippy
         if: matrix.toolchain == '1.99.1'
         run: cargo +"$RUST_TOOLCHAIN" clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test release planning
+        if: matrix.toolchain == '1.99.1'
+        run: python3 -m unittest discover -s tests -p 'test_publish.py' -v
 
   format:
     name: Nightly formatting

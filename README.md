@@ -175,6 +175,34 @@ The PE check examines ordinary static imports, not delay imports or runtime DLL
 loading. CI executes on modern Windows; it does not prove runtime compatibility
 with Windows XP, Vista, or 7.
 
+## Publishing Releases
+
+Publishing is manual only: open **Actions → Publish to crates.io → Run workflow**,
+select **main**, and enter the version already committed in all package manifests
+(for example, `0.2.1`). The workflow does not bump versions or create tags.
+
+Keep **dry_run** checked to validate package archives and run the complete CI
+matrix without uploading. Uncheck it when you want to publish. Actual uploads
+require the repository secret **`CARGO_REGISTRY_TOKEN`**, containing a crates.io
+token with publishing permission for the OldWin packages.
+
+`scripts/publish.py` publishes dependencies before their consumers and the
+`oldwin` helper last. Versions already uploaded are skipped, so a partial release
+can be resumed by running the workflow again with the same version. Yanked
+versions are rejected. If crates.io has not indexed a required dependency yet,
+publishing stops with an explicit error; rerun after registry indexing recovers.
+Only one release workflow runs at a time.
+
+Local commands use the same publisher:
+
+```shell
+# Safe default: package verification only, no upload.
+python3 scripts/publish.py --version 0.2.1
+
+# Explicitly upload missing versions using Cargo's configured credential.
+python3 scripts/publish.py --version 0.2.1 --publish
+```
+
 ## Contributing
 
 Contributions of all kinds are welcome, including:
