@@ -99,7 +99,7 @@ jobs:
           $feature = if ($env:MODE -eq 'yy-only') { 'yy-thunks' } else { 'vc-ltl5' }
           $crt = if ($env:MODE -eq 'yy-only') { 'none' } else { $env:MODE }
           $crtFlag = if ($env:MODE -eq 'static') { '+crt-static' } else { '-crt-static' }
-          $env:RUSTFLAGS = "-C linker=link.exe -C target-feature=$crtFlag"
+          $env:RUSTFLAGS = "-C linker=link.exe -C target-feature=$crtFlag -C link-arg=/WX:4098"
           foreach ($os in @('xp', 'vista', 'win7', 'win8', 'win10')) {
             Write-Host "::group::$os / $env:MODE / $env:TARGET"
             $env:CARGO_TARGET_DIR = Join-Path $env:RUNNER_TEMP "oldwin-$os-$env:MODE"
@@ -118,7 +118,7 @@ jobs:
       - name: Verify Windows-subsystem entry point without a terminal
         if: matrix.mode == 'dynamic'
         run: |
-          $env:RUSTFLAGS = '-C linker=link.exe -C target-feature=-crt-static'
+          $env:RUSTFLAGS = '-C linker=link.exe -C target-feature=-crt-static -C link-arg=/WX:4098'
           $env:CARGO_TARGET_DIR = Join-Path $env:RUNNER_TEMP 'oldwin-gui'
           cargo "+$env:RUST_TOOLCHAIN" build --manifest-path tests/link-smoke/Cargo.toml --target $env:TARGET --locked --no-default-features --features win7,vc-ltl5,gui --lib --bin oldwin-link-smoke
           if ($LASTEXITCODE -ne 0) { throw "GUI build failed: $LASTEXITCODE" }
@@ -147,7 +147,7 @@ jobs:
     env:
       TARGET: ${{ matrix.target }}
       ARCH: ${{ matrix.arch }}
-      RUSTFLAGS: '-C linker=link.exe -C target-feature=-crt-static'
+      RUSTFLAGS: '-C linker=link.exe -C target-feature=-crt-static -C link-arg=/WX:4098'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

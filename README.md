@@ -148,6 +148,7 @@ GitHub Actions runs on pushes, pull requests, and manual dispatch:
   covering all five OS features with YY-Thunks alone, dynamic CRT, and static CRT.
 - Windows-subsystem executables and nightly Windows 7 `build-std` on both architectures.
 - PE checks for architecture, subsystem/version, thunk API imports, and CRT DLL imports.
+- MSVC CRT-default-library conflicts (`LNK4098`) fail CI instead of passing as warnings.
 
 The standalone consumer integration tests exercise the thunk clock against the
 system clock, CRT reallocation across growth/shrink transitions, and CRT number
