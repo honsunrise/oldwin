@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from scripts.publish import pending_packages, publish_order, require_indexed, workspace_packages
+from scripts.publish import pending_packages, publish_order, release_request, require_indexed, workspace_packages
 
 
 def package(name, dependencies=(), version="0.2.1"):
@@ -22,6 +22,41 @@ class PublishTests(unittest.TestCase):
             "oldwin-vc-ltl5": package("oldwin-vc-ltl5", ["oldwin-native"]),
             "oldwin-native": package("oldwin-native", version="0.2.1+5.3.1"),
         }
+
+    def test_tag_push_uses_tag_version_and_enables_upload(self):
+        self.assertEqual(
+            release_request("push", "refs/tags/v0.2.1", "9.9.9", True),
+            ("refs/tags/v0.2.1", "0.2.1", True),
+        )
+
+    def test_manual_dry_run_uses_current_main_commit(self):
+        self.assertEqual(
+            release_request("workflow_dispatch", "refs/heads/main", "v0.2.1", True),
+            ("HEAD", "0.2.1", False),
+        )
+
+    def test_manual_upload_uses_release_tag_not_moving_main(self):
+        self.assertEqual(
+            release_request("workflow_dispatch", "refs/heads/main", "0.2.1", False),
+            ("refs/tags/v0.2.1", "0.2.1", True),
+        )
+
+    def test_branch_push_and_non_main_manual_requests_are_rejected(self):
+        for event, ref in [
+            ("push", "refs/heads/main"),
+            ("push", "refs/tags/release-0.2.1"),
+            ("workflow_dispatch", "refs/heads/feature"),
+            ("pull_request", "refs/pull/1/merge"),
+        ]:
+            with self.subTest(event=event, ref=ref):
+                with self.assertRaises(ValueError):
+                    release_request(event, ref, "0.2.1", False)
+
+    def test_invalid_release_versions_are_rejected(self):
+        for version in ["", "0.2", "01.2.1", "0.2.1\nupload=true", "0.2.1/branch"]:
+            with self.subTest(version=version):
+                with self.assertRaises(ValueError):
+                    release_request("workflow_dispatch", "refs/heads/main", version, False)
 
     def test_dependency_order_keeps_helper_last(self):
         order = publish_order(self.packages)

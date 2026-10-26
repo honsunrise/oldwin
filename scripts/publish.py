@@ -4,6 +4,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 import urllib.error
@@ -12,6 +13,30 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
 USER_AGENT = "oldwin-publish (https://github.com/honsunrise/oldwin)"
+
+
+def release_request(event_name, ref, version, dry_run):
+    """Bind a release request to its tag, or to main for a manual dry run."""
+    if event_name == "push":
+        if not ref.startswith("refs/tags/v"):
+            raise ValueError("Automatic publishing requires a v-prefixed version tag")
+        version = ref.removeprefix("refs/tags/v")
+        source, upload = ref, True
+    elif event_name == "workflow_dispatch":
+        if ref != "refs/heads/main":
+            raise ValueError("Run the manual release workflow from main")
+        version = version.removeprefix("v")
+        source = "HEAD" if dry_run else f"refs/tags/v{version}"
+        upload = not dry_run
+    else:
+        raise ValueError(f"Unsupported release event: {event_name}")
+    if not re.fullmatch(
+        r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+        r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?",
+        version,
+    ):
+        raise ValueError(f"Invalid release version: {version!r}")
+    return source, version, upload
 
 
 def workspace_packages(metadata, version):

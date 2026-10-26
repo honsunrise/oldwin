@@ -1,10 +1,12 @@
 name: Publish to crates.io
 
 on:
+  push:
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version already committed to main (e.g. 0.2.1)'
+        description: 'Release version (e.g. 0.2.1); uploads use its v-prefixed tag'
         required: true
         type: string
       dry_run:
@@ -21,40 +23,77 @@ concurrency:
 
 jobs:
   prepare:
+    if: ${{ github.event_name != 'push' || !github.event.deleted }}
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      sha: ${{ steps.release.outputs.sha }}
+      upload: ${{ steps.release.outputs.upload }}
     env:
       RELEASE_VERSION: ${{ inputs.version }}
+      DRY_RUN: ${{ inputs.dry_run }}
       RUSTUP_TOOLCHAIN: '1.99.1'
     steps:
-      - name: Require main branch
-        run: |
-          if [[ "$GITHUB_REF" != refs/heads/main ]]; then
-            echo '::error::Run this workflow from main.'
-            exit 1
-          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
+      - name: Resolve and validate release commit
+        id: release
+        run: |
+          python3 - <<'PY'
+          import os
+          import subprocess
+          from scripts.publish import release_request
+
+          source, version, upload = release_request(
+              os.environ["GITHUB_EVENT_NAME"],
+              os.environ["GITHUB_REF"],
+              os.environ.get("RELEASE_VERSION", ""),
+              os.environ.get("DRY_RUN", "false") == "true",
+          )
+          def commit(ref):
+              return subprocess.check_output(
+                  ["git", "rev-parse", "--verify", f"{ref}^{{commit}}"], text=True
+              ).strip()
+          sha = commit(source)
+          if os.environ["GITHUB_EVENT_NAME"] == "push" and sha != commit("HEAD"):
+              raise ValueError("The release tag moved after this workflow was triggered")
+          if upload:
+              subprocess.run(
+                  ["git", "merge-base", "--is-ancestor", sha, "refs/remotes/origin/main"],
+                  check=True,
+              )
+          subprocess.run(["git", "checkout", "--detach", sha], check=True)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"version={version}\nsha={sha}\nupload={str(upload).lower()}\n")
+          PY
       - name: Install publishing toolchain
         run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
       - name: Validate version and package archives
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: python3 scripts/publish.py --version "$RELEASE_VERSION"
 
   ci:
     needs: prepare
     uses: ./.github/workflows/ci.yml
+    with:
+      checkout_ref: ${{ needs.prepare.outputs.sha }}
 
   publish:
     needs: [prepare, ci]
-    if: ${{ !inputs.dry_run }}
+    if: ${{ needs.prepare.outputs.upload == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
-      RELEASE_VERSION: ${{ inputs.version }}
+      RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
       RUSTUP_TOOLCHAIN: '1.99.1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.prepare.outputs.sha }}
           persist-credentials: false
       - name: Install publishing toolchain
         run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal

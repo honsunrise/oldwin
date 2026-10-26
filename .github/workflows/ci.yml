@@ -2,9 +2,16 @@ name: CI
 
 on:
   push:
+    branches: ['**']
   pull_request:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      checkout_ref:
+        description: Exact commit to test when called by the release workflow
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -26,6 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.checkout_ref || github.sha }}
           persist-credentials: false
       - name: Install pinned Rust
         run: rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --component clippy
@@ -46,6 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.checkout_ref || github.sha }}
           persist-credentials: false
       - name: Install pinned nightly rustfmt
         run: rustup toolchain install "$NIGHTLY_TOOLCHAIN" --profile minimal --component rustfmt
@@ -81,6 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.checkout_ref || github.sha }}
           persist-credentials: false
       - name: Configure native MSVC and Windows SDK
         run: ./scripts/setup-msvc.ps1 -Arch '${{ matrix.msvc-arch }}'
@@ -152,6 +162,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.checkout_ref || github.sha }}
           persist-credentials: false
       - name: Configure native MSVC and Windows SDK
         run: ./scripts/setup-msvc.ps1 -Arch '${{ matrix.msvc-arch }}'

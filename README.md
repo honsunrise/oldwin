@@ -177,14 +177,27 @@ with Windows XP, Vista, or 7.
 
 ## Publishing Releases
 
-Publishing is manual only: open **Actions → Publish to crates.io → Run workflow**,
-select **main**, and enter the version already committed in all package manifests
-(for example, `0.2.1`). The workflow does not bump versions or create tags.
+Push a version tag such as **`v0.2.1`** to start the release workflow. The tag must
+point to a commit already on `main`. Its version must match all publishable
+package manifests (ignoring native-library build metadata).
 
-Keep **dry_run** checked to validate package archives and run the complete CI
-matrix without uploading. Uncheck it when you want to publish. Actual uploads
-require the repository secret **`CARGO_REGISTRY_TOKEN`**, containing a crates.io
-token with publishing permission for the OldWin packages.
+```shell
+git tag -a v0.2.1 -m "v0.2.1"
+git push origin v0.2.1
+```
+
+The workflow validates package archives and runs the complete CI matrix before
+uploading. Preparation, CI, and publishing all use the same immutable commit,
+not a later version of `main`. Deleted tags do not trigger publication.
+
+For a preview or recovery, open **Actions → Publish to crates.io → Run workflow**,
+select **main**, and enter the release version. **dry_run** defaults to checked
+and validates the selected main commit without uploading. Uncheck it to publish
+from the matching existing version tag; recovery never substitutes newer main
+code for that tag. The workflow does not bump versions or create tags.
+
+Actual uploads require the repository secret **`CARGO_REGISTRY_TOKEN`**, containing
+a crates.io token with publishing permission for the OldWin packages.
 
 `scripts/publish.py` publishes dependencies before their consumers and the
 `oldwin` helper last. Versions already uploaded are skipped, so a partial release
