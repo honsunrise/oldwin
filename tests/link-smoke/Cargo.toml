@@ -1,0 +1,25 @@
+[package]
+name = "oldwin-link-smoke"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+publish = false
+
+[workspace]
+
+[dependencies]
+oldwin-targets = { path = "../../oldwin-targets", default-features = false }
+
+[build-dependencies]
+oldwin = { path = "../../oldwin", default-features = false }
+
+[features]
+default = ["win7", "vc-ltl5"]
+gui = []
+vc-ltl5 = ["oldwin/vc-ltl5", "oldwin-targets/vc-ltl5"]
+yy-thunks = ["oldwin/yy-thunks", "oldwin-targets/yy-thunks"]
+xp = ["oldwin/xp", "oldwin-targets/xp"]
+vista = ["oldwin/vista", "oldwin-targets/vista"]
+win7 = ["oldwin/win7", "oldwin-targets/win7"]
+win8 = ["oldwin/win8", "oldwin-targets/win8"]
+win10 = ["oldwin/win10", "oldwin-targets/win10"]

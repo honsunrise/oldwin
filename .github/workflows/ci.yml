@@ -1,0 +1,183 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  NIGHTLY_TOOLCHAIN: nightly-2026-10-26
+
+jobs:
+  host:
+    name: Linux / Rust ${{ matrix.toolchain }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: ['1.80.0', '1.99.1']
+    env:
+      RUST_TOOLCHAIN: ${{ matrix.toolchain }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust
+        run: rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --component clippy
+      - name: Build workspace
+        run: cargo +"$RUST_TOOLCHAIN" build --workspace --all-targets --locked
+      - name: Test workspace
+        run: cargo +"$RUST_TOOLCHAIN" test --workspace --locked
+      - name: Clippy
+        if: matrix.toolchain == '1.99.1'
+        run: cargo +"$RUST_TOOLCHAIN" clippy --workspace --all-targets --locked -- -D warnings
+
+  format:
+    name: Nightly formatting
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned nightly rustfmt
+        run: rustup toolchain install "$NIGHTLY_TOOLCHAIN" --profile minimal --component rustfmt
+      - name: Check workspace formatting
+        run: cargo +"$NIGHTLY_TOOLCHAIN" fmt --all -- --check
+      - name: Check standalone fixture formatting
+        run: cargo +"$NIGHTLY_TOOLCHAIN" fmt --manifest-path tests/link-smoke/Cargo.toml --all -- --check
+
+  windows:
+    name: MSVC / ${{ matrix.arch }} / Rust ${{ matrix.toolchain }} / ${{ matrix.mode }}
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86, x86_64]
+        toolchain: ['1.80.0', '1.99.1']
+        mode: [yy-only, dynamic, static]
+        include:
+          - arch: x86
+            target: i686-pc-windows-msvc
+            msvc-arch: amd64_x86
+          - arch: x86_64
+            target: x86_64-pc-windows-msvc
+            msvc-arch: amd64
+    env:
+      RUST_TOOLCHAIN: ${{ matrix.toolchain }}
+      TARGET: ${{ matrix.target }}
+      ARCH: ${{ matrix.arch }}
+      MODE: ${{ matrix.mode }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Configure native MSVC and Windows SDK
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+        with:
+          arch: ${{ matrix.msvc-arch }}
+          vsversion: '2022'
+      - name: Install pinned Rust and target
+        run: |
+          rustup toolchain install $env:RUST_TOOLCHAIN --profile minimal --target $env:TARGET
+          if ($LASTEXITCODE -ne 0) { throw "Rust toolchain installation failed: $LASTEXITCODE" }
+          $linker = (Get-Command link.exe -CommandType Application).Source
+          if ($linker -notmatch '[\\/]VC[\\/]Tools[\\/]MSVC[\\/]') {
+            throw "Expected Visual Studio link.exe, got $linker"
+          }
+          python --version
+          if ($LASTEXITCODE -ne 0) { throw "Python is unavailable: $LASTEXITCODE" }
+      - name: Build, run, test and inspect all OS selections
+        # These runs prove behavior on the modern runner, not XP/Vista runtime support.
+        run: |
+          $feature = if ($env:MODE -eq 'yy-only') { 'yy-thunks' } else { 'vc-ltl5' }
+          $crt = if ($env:MODE -eq 'yy-only') { 'none' } else { $env:MODE }
+          $crtFlag = if ($env:MODE -eq 'static') { '+crt-static' } else { '-crt-static' }
+          $env:RUSTFLAGS = "-C linker=link.exe -C target-feature=$crtFlag"
+          foreach ($os in @('xp', 'vista', 'win7', 'win8', 'win10')) {
+            Write-Host "::group::$os / $env:MODE / $env:TARGET"
+            $env:CARGO_TARGET_DIR = Join-Path $env:RUNNER_TEMP "oldwin-$os-$env:MODE"
+            $features = "$os,$feature"
+            cargo "+$env:RUST_TOOLCHAIN" build --manifest-path tests/link-smoke/Cargo.toml --target $env:TARGET --locked --no-default-features --features $features --lib --bin oldwin-link-smoke
+            if ($LASTEXITCODE -ne 0) { throw "$os build failed: $LASTEXITCODE" }
+            $exe = Join-Path $env:CARGO_TARGET_DIR "$env:TARGET/debug/oldwin-link-smoke.exe"
+            & $exe
+            if ($LASTEXITCODE -ne 0) { throw "$os executable failed: $LASTEXITCODE" }
+            cargo "+$env:RUST_TOOLCHAIN" test --manifest-path tests/link-smoke/Cargo.toml --target $env:TARGET --locked --no-default-features --features $features --test runtime
+            if ($LASTEXITCODE -ne 0) { throw "$os runtime tests failed: $LASTEXITCODE" }
+            python tests/verify-pe.py --exe $exe --arch $env:ARCH --os $os --crt $crt --subsystem console
+            if ($LASTEXITCODE -ne 0) { throw "$os PE verification failed: $LASTEXITCODE" }
+            Write-Host '::endgroup::'
+          }
+      - name: Verify Windows-subsystem entry point without a terminal
+        if: matrix.mode == 'dynamic'
+        run: |
+          $env:RUSTFLAGS = '-C linker=link.exe -C target-feature=-crt-static'
+          $env:CARGO_TARGET_DIR = Join-Path $env:RUNNER_TEMP 'oldwin-gui'
+          cargo "+$env:RUST_TOOLCHAIN" build --manifest-path tests/link-smoke/Cargo.toml --target $env:TARGET --locked --no-default-features --features win7,vc-ltl5,gui --lib --bin oldwin-link-smoke
+          if ($LASTEXITCODE -ne 0) { throw "GUI build failed: $LASTEXITCODE" }
+          $exe = Join-Path $env:CARGO_TARGET_DIR "$env:TARGET/debug/oldwin-link-smoke.exe"
+          python tests/verify-pe.py --exe $exe --arch $env:ARCH --os win7 --crt dynamic --subsystem windows
+          if ($LASTEXITCODE -ne 0) { throw "GUI PE verification failed: $LASTEXITCODE" }
+          $process = Start-Process -FilePath $exe -WindowStyle Hidden -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "GUI executable failed: $($process.ExitCode)" }
+
+  win7-build-std:
+    name: Win7 Tier 3 / ${{ matrix.arch }} / nightly / dynamic CRT
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86
+            target: i686-win7-windows-msvc
+            msvc-arch: amd64_x86
+          - arch: x86_64
+            target: x86_64-win7-windows-msvc
+            msvc-arch: amd64
+    env:
+      TARGET: ${{ matrix.target }}
+      ARCH: ${{ matrix.arch }}
+      RUSTFLAGS: '-C linker=link.exe -C target-feature=-crt-static'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Configure native MSVC and Windows SDK
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+        with:
+          arch: ${{ matrix.msvc-arch }}
+          vsversion: '2022'
+      - name: Install pinned nightly with standard-library sources
+        # Tier 3 targets have no rustup target add artifacts; build their std below.
+        run: |
+          rustup toolchain install $env:NIGHTLY_TOOLCHAIN --profile minimal --component rust-src
+          if ($LASTEXITCODE -ne 0) { throw "Nightly toolchain installation failed: $LASTEXITCODE" }
+          $linker = (Get-Command link.exe -CommandType Application).Source
+          if ($linker -notmatch '[\\/]VC[\\/]Tools[\\/]MSVC[\\/]') {
+            throw "Expected Visual Studio link.exe, got $linker"
+          }
+          python --version
+          if ($LASTEXITCODE -ne 0) { throw "Python is unavailable: $LASTEXITCODE" }
+      - name: Build std, run binary and runtime tests, inspect PE
+        # A modern Windows runner does not constitute runtime testing on Windows 7.
+        run: |
+          $env:CARGO_TARGET_DIR = Join-Path $env:RUNNER_TEMP 'oldwin-win7-build-std'
+          cargo "+$env:NIGHTLY_TOOLCHAIN" build -Zbuild-std --manifest-path tests/link-smoke/Cargo.toml --target $env:TARGET --locked --no-default-features --features win7,vc-ltl5 --lib --bin oldwin-link-smoke
+          if ($LASTEXITCODE -ne 0) { throw "Win7 build-std failed: $LASTEXITCODE" }
+          $exe = Join-Path $env:CARGO_TARGET_DIR "$env:TARGET/debug/oldwin-link-smoke.exe"
+          & $exe
+          if ($LASTEXITCODE -ne 0) { throw "Win7 executable failed: $LASTEXITCODE" }
+          cargo "+$env:NIGHTLY_TOOLCHAIN" test -Zbuild-std --manifest-path tests/link-smoke/Cargo.toml --target $env:TARGET --locked --no-default-features --features win7,vc-ltl5 --test runtime
+          if ($LASTEXITCODE -ne 0) { throw "Win7 runtime tests failed: $LASTEXITCODE" }
+          python tests/verify-pe.py --exe $exe --arch $env:ARCH --os win7 --crt dynamic --subsystem console
+          if ($LASTEXITCODE -ne 0) { throw "Win7 PE verification failed: $LASTEXITCODE" }

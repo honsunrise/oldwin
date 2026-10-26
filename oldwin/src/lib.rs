@@ -25,7 +25,7 @@ pub fn overwrite_subsystem(subsystem: Subsystem) {
     let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();
 
-    if target_os != "windows" && target_env != "msvc" {
+    if target_os != "windows" || target_env != "msvc" {
         println!("cargo:warning=Please Only Use OldWin on Windows MSVC!");
         return;
     }
@@ -55,7 +55,6 @@ pub fn inject() {
     let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();
     let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
-    let target_feature = std::env::var("CARGO_CFG_TARGET_FEATURE").unwrap();
 
     if target_os != "windows" || target_env != "msvc" {
         println!("cargo:warning=Please Only Use OldWin on Windows MSVC!");
@@ -88,37 +87,45 @@ pub fn inject() {
         },
     }
 
-    if target_feature.contains("crt-static") {
-        println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBVCRUNTIME");
-        println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBUCRT");
-        println!("cargo:rustc-link-lib=static:+whole-archive=libucrt");
-        println!("cargo:rustc-link-lib=static=libvcruntime");
-    } else {
-        println!("cargo:rustc-link-arg=/NODEFAULTLIB:VCRUNTIME");
-        println!("cargo:rustc-link-arg=/NODEFAULTLIB:UCRT");
-        println!("cargo:rustc-link-lib=static:+whole-archive=ucrt");
-        println!("cargo:rustc-link-lib=static=vcruntime");
+    let target_feature = std::env::var("CARGO_CFG_TARGET_FEATURE").unwrap();
+    if cfg!(feature = "vc-ltl5") {
+        if target_feature.contains("crt-static") {
+            println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBVCRUNTIME");
+            println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBUCRT");
+            println!("cargo:rustc-link-lib=static:-bundle=libucrt");
+            println!("cargo:rustc-link-lib=static:-bundle=libvcruntime");
+        } else {
+            println!("cargo:rustc-link-arg=/NODEFAULTLIB:VCRUNTIME");
+            println!("cargo:rustc-link-arg=/NODEFAULTLIB:UCRT");
+            println!("cargo:rustc-link-lib=static:-bundle=ucrt");
+            println!("cargo:rustc-link-lib=static:-bundle=vcruntime");
+        }
     }
 
-    #[cfg(feature = "xp")]
-    println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_WinXP.obj");
+    // COFF objects must reach the linker directly, not be bundled as archives into rlibs.
+    #[cfg(all(feature = "yy-thunks", feature = "xp"))]
+    println!("cargo:rustc-link-lib=static:-bundle,+verbatim=YY_Thunks_for_WinXP.obj");
 
-    #[cfg(feature = "vista")]
-    println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Vista.obj");
+    #[cfg(all(feature = "yy-thunks", feature = "vista"))]
+    println!("cargo:rustc-link-lib=static:-bundle,+verbatim=YY_Thunks_for_Vista.obj");
 
-    #[cfg(feature = "win7")]
-    println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Win7.obj");
+    #[cfg(all(feature = "yy-thunks", feature = "win7"))]
+    println!("cargo:rustc-link-lib=static:-bundle,+verbatim=YY_Thunks_for_Win7.obj");
 
     #[cfg(feature = "win8")]
     {
-        println!("cargo:rustc-link-lib=static:+verbatim=vccorlib140.pacth.lib");
-        println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Win8.obj");
+        #[cfg(feature = "vc-ltl5")]
+        println!("cargo:rustc-link-lib=static:+verbatim=vccorlib140.patch.lib");
+        #[cfg(feature = "yy-thunks")]
+        println!("cargo:rustc-link-lib=static:-bundle,+verbatim=YY_Thunks_for_Win8.obj");
     }
 
     #[cfg(feature = "win10")]
     {
-        println!("cargo:rustc-link-lib=static:+verbatim=vccorlib140.pacth.lib");
-        println!("cargo:rustc-link-lib=static:+verbatim=YY_Thunks_for_Win10.0.10240.obj");
+        #[cfg(feature = "vc-ltl5")]
+        println!("cargo:rustc-link-lib=static:+verbatim=vccorlib140.patch.lib");
+        #[cfg(feature = "yy-thunks")]
+        println!("cargo:rustc-link-lib=static:-bundle,+verbatim=YY_Thunks_for_Win10.0.10240.obj");
     }
 
     if cfg!(not(feature = "hidden-build-warning")) {
