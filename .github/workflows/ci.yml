@@ -87,7 +87,7 @@ jobs:
         run: |
           rustup toolchain install $env:RUST_TOOLCHAIN --profile minimal --target $env:TARGET
           if ($LASTEXITCODE -ne 0) { throw "Rust toolchain installation failed: $LASTEXITCODE" }
-          $linker = (Get-Command link.exe -CommandType Application).Source
+          $linker = (Get-Command link.exe -CommandType Application | Select-Object -First 1).Source
           if ($linker -notmatch '[\\/]VC[\\/]Tools[\\/]MSVC[\\/]') {
             throw "Expected Visual Studio link.exe, got $linker"
           }
@@ -162,7 +162,7 @@ jobs:
         run: |
           rustup toolchain install $env:NIGHTLY_TOOLCHAIN --profile minimal --component rust-src
           if ($LASTEXITCODE -ne 0) { throw "Nightly toolchain installation failed: $LASTEXITCODE" }
-          $linker = (Get-Command link.exe -CommandType Application).Source
+          $linker = (Get-Command link.exe -CommandType Application | Select-Object -First 1).Source
           if ($linker -notmatch '[\\/]VC[\\/]Tools[\\/]MSVC[\\/]') {
             throw "Expected Visual Studio link.exe, got $linker"
           }
